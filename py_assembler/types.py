@@ -58,8 +58,6 @@ class Type:
         """Assign instruction parts to there values"""
         raise NotImplemented
 
-    assign.length = 0
-
 
 @dataclass
 class iType(Type):
@@ -81,7 +79,6 @@ class iType(Type):
         if str(imm).strip().startswith('#'):
             imm = imm.strip().replace('#', '')
         self.imm = int(imm)
-    assign.length = 3
     assign.__doc__ = Type.assign.__doc__
 
 
@@ -111,7 +108,6 @@ class rType(Type):
         self.rt = get_register_type(rt)
         self.rd = get_register_type(rd)
         self.shift = shift if shift is not None else self.shift
-    assign.length = 4
     assign.__doc__ = Type.assign.__doc__
 
 
@@ -139,7 +135,6 @@ class jType(Type):
                 raise ValueError('pseudo should be register or number')
         self.pseudo = pseudo
 
-    assign.length = 1
     assign.__doc__ = Type.assign.__doc__
 
 

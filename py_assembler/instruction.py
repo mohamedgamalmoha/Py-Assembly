@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+import inspect
 
 from .types import iType, TYPES, get_instruction_type
 
@@ -72,8 +73,12 @@ class Instruction:
         return self.typ.values
 
     def get_inst_sections_count(self) -> int:
-        """"Return length of instructions sections / parts"""
-        return self.typ.assign.length
+        """"Return count of instructions sections / parts"""
+        return len(self.get_inst_sections())
+
+    def get_inst_assigned_sections_count(self) -> int:
+        """Return count of instruction assigned section"""
+        return sum(1 for parm in inspect.signature(self.typ.assign).parameters if parm != 'self')
 
 
 def example():
