@@ -21,43 +21,54 @@ def get_register_num(reg_name: str) -> int:
 
 @dataclass
 class Reg:
+    """Base class for mode addressing"""
     string: str
     match_pattern: str = field(init=False)
     parse_pattern: str = field(init=False)
 
     @classmethod
     def process_str(cls, value: str) -> str:
+        """Modify string before it is used in parsing process"""
         return value
 
     @classmethod
     def match(cls, value: str) -> bool:
+        """Validate string is matching the pattern"""
         return bool(re.fullmatch(cls.match_pattern, value))
 
     def get_proper_str(self) -> str:
+        """Get ready string for parsing process"""
         return self.process_str(self.string)
 
     @property
     def is_matched(self) -> bool:
+        """Validate string is matching the pattern"""
         return self.match(self.get_proper_str())
 
     def parse(self) -> list:
+        """Parse string to get it`s parts"""
         # if not self.is_matched:
         #     raise ValueError("Reg does not match")
         return re.findall(self.parse_pattern, self.get_proper_str())
 
     @abstractmethod
     def get_val(self) -> int:
+        """Get value of addressing"""
         raise NotImplemented
 
     def get_bin_repr(self) -> bin:
+        """Get binary value of addressing"""
         return bin(self.get_val())
 
     def get_hex_repr(self) -> hex:
+        """Get hex value of addressing"""
         return hex(self.get_val())
 
     def __setattr__(self, key, value):
+        # deny setting values for match pattern and parse pattern
         if key in ['match_pattern', 'parse_pattern']:
             raise ValueError()
+        # remove space from string value
         if key == 'string':
             value = value.strip()
         super().__setattr__(key, value)
@@ -65,6 +76,7 @@ class Reg:
 
 @dataclass
 class RegularReg(Reg):
+    """Regular / Register mode addressing"""
     match_pattern = 'zero|[a-zA-Z]{2}|[a-zA-Z]{1}\d{1}'
     parse_pattern = match_pattern
 
@@ -74,6 +86,7 @@ class RegularReg(Reg):
 
 @dataclass
 class ImmediateReg(Reg):
+    """Immediate / Constant mode addressing"""
     match_pattern = '#?\d{1,}'
     parse_pattern = '#?(\d{1,})'
 
@@ -83,35 +96,44 @@ class ImmediateReg(Reg):
             raise ValueError
         return int(num)
 
+    get_val.__doc__ = Reg.get_val.__doc__
+
 
 @dataclass
 class DirectReg(ImmediateReg):
+    """Direct mode addressing"""
     match_pattern = '\[\s*#?\d{1,}\s*\]'
     parse_pattern = '\[\s*#?(\d{1,})\s*\]'
 
 
 @dataclass
 class InDirectReg(RegularReg):
+    """InDirect mode addressing"""
     match_pattern = '\[\s*zero\s*\]|\[\s*[a-zA-Z]{2}\s*\]|\[\s*[a-zA-Z]{1}\d{1}\s*\]'
 
 
 @dataclass
 class BasePlusIndexReg(RegularReg):
+    """Base plus index mode addressing"""
 
     @classmethod
     def process_str(cls, value: str) -> str:
-        return value.replace('[', '').replace(']', "")
+        return value.replace('[', '').replace(']', '')
+
+    process_str.__doc__ = Reg.process_str.__doc__
 
     @classmethod
     def match(cls, value: str) -> bool:
         s = cls.process_str(value)
-
+        # validating the format of the string
         index = s.find('+')
         if index == -1 or not value.startswith('[') or not value.endswith(']'):
             return False
-
+        # get two registers then match them with pattern
         matched_string = (s[:index].strip(), s[index + 1:].strip())
         return all(map(lambda i: re.fullmatch(cls.match_pattern, i), matched_string))
+
+    match.__doc__ = Reg.match.__doc__
 
     def get_val(self) -> int:
         s = self.parse()
@@ -119,32 +141,40 @@ class BasePlusIndexReg(RegularReg):
             raise ValueError("Invalid register value")
         return sum(get_register_num(i) for i in s)
 
+    get_val.__doc__ = Reg.get_val.__doc__
+
 
 @dataclass
 class RelativeReg(RegularReg):
+    """Relative mode addressing"""
 
     @classmethod
     def process_str(cls, value: str):
         return value.strip().replace('[', '').replace(']', "").replace('#', '')
 
+    process_str.__doc__ = Reg.process_str.__doc__
+
     @classmethod
     def match(cls, value: str) -> bool:
         s = cls.process_str(value)
+        # validating the format of the value
         index = s.find('+')
-
         if index == -1 or not value.startswith('[') or not value.endswith(']'):
             return False
-
+        # check if one value is numeric and the other is register
         matched_string = (s[:index].strip(), s[index + 1:].strip())
         if matched_string[0].isnumeric():
             matched_string = matched_string[::-1]
         elif not matched_string[0].isnumeric() and not matched_string[1].isnumeric():
             return False
-
         return bool(re.fullmatch(cls.match_pattern, matched_string[0]))
+
+    match.__doc__ = Reg.match.__doc__
 
     def get_val(self) -> int:
         return sum(int(i) if i.isnumeric() else get_register_num(i) for i in self.parse())
+
+    get_val.__doc__ = Reg.get_val.__doc__
 
 
 REGS = RegularReg, ImmediateReg, DirectReg, InDirectReg, BasePlusIndexReg, RelativeReg

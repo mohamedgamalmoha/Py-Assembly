@@ -14,11 +14,13 @@ def bin_conv(num: str, length: int) -> str:
 
 
 def is_parent(cls: type, parent: type) -> bool:
+    """Check if the parent in cls`s mro"""
     return parent in cls.__mro__
 
 
 @dataclass
 class Type:
+    """Base type class"""
     op: str
     avg_exc_time: int = field(metadata={'': 'ns'})
     opcode: bin = field(metadata={'length': 6})
@@ -61,7 +63,7 @@ class Type:
 
 @dataclass
 class iType(Type):
-
+    """Immediate Type"""
     rs: bin = field(metadata={'length': 5}, init=False)
     rt: bin = field(metadata={'length': 5}, init=False)
     imm: bin = field(metadata={'length': 16}, init=False)
@@ -84,7 +86,7 @@ class iType(Type):
 
 @dataclass
 class rType(Type):
-
+    """Relative Type"""
     rs: bin = field(metadata={'length': 5}, init=False)
     rt: bin = field(metadata={'length': 5}, init=False)
     rd: bin = field(metadata={'length': 5}, init=False)
@@ -113,6 +115,7 @@ class rType(Type):
 
 @dataclass
 class jType(Type):
+    """Jump Type"""
     op: str
     avg_exc_time: float
 
