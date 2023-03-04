@@ -1,18 +1,18 @@
 from tkinter import Menu, END
 
 from gui.visualizations import Graph
-from py_assembler.parse import parser_as_type
+from py_assembler.parse import instructions_parser
 
 
 def insert_results(txt, cmd):
-    instructions = parser_as_type(txt.get(0.0, END))
+    instructions = instructions_parser(txt.get(0.0, END))
     cmd.delete("1.0", END)
     for inst in instructions:
         cmd.insert(END, f"\n{inst.inst} // {inst.get_hex_repr()} // {inst.get_bin_repr()}")
 
 
 def show_results(txt):
-    instructions = parser_as_type(txt.get(0.0, END))
+    instructions = instructions_parser(txt.get(0.0, END))
     Graph(
         [i.op for i in instructions],
         [i.typ.avg_exc_time for i in instructions],

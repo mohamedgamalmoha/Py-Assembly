@@ -1,6 +1,11 @@
+from typing import List
 from py_assembler.instruction import Instruction
 
 
-def parser_as_type(txt: str) -> list:
-    instructions = [i.replace('\n', '').strip() for i in txt.split(';') if i.strip()]
-    return list(map(lambda inst: Instruction(inst), instructions))
+def instructions_parser(instructions_str: str) -> List[Instruction]:
+    """Parse multiple instructions at once from string"""
+    return [
+        Instruction(i.replace('\n', '').strip())
+        for i in instructions_str.split(';')
+        if i.strip()
+    ]

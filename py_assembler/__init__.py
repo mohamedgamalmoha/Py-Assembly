@@ -11,7 +11,7 @@ It is used to convert native mips assembly instructions into machine code.
 from .regs import RegularReg, ImmediateReg, DirectReg, InDirectReg, BasePlusIndexReg, RelativeReg, REGS, get_register_type
 from .types import iType, rType, jType, INSTRUCTIONS, get_instruction_type
 from .instruction import Instruction
-from .parse import parser_as_type
+from .parse import instructions_parser
 
 
 __title__ = 'Py Assembler'
@@ -40,5 +40,5 @@ __all__ = [
     # Instruction
     Instruction,
     # Parse String
-    parser_as_type
+    instructions_parser
 ]
