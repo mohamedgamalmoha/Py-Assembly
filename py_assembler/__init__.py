@@ -8,8 +8,8 @@ It is used to convert native mips assembly instructions into machine code.
 :license: BSD 3-clause. See LICENSE for more details.
 """
 
-from .regs import RegularReg, ImmediateReg, DirectReg, InDirectReg, BasePlusIndexReg, RelativeReg
-from .types import iType, rType, jType, INSTRUCTIONS
+from .regs import RegularReg, ImmediateReg, DirectReg, InDirectReg, BasePlusIndexReg, RelativeReg, REGS, get_register_type
+from .types import iType, rType, jType, INSTRUCTIONS, get_instruction_type
 from .instruction import Instruction
 from .parse import parser_as_type
 
@@ -25,12 +25,18 @@ __copyright__ = 'Copyright 2022'
 
 
 __all__ = [
+    # All-Registers
+    REGS,
     # Registers
     RegularReg, ImmediateReg, DirectReg, InDirectReg, BasePlusIndexReg, RelativeReg,
+    # Get Register Type
+    get_register_type,
     # Types
     iType, rType, jType,
     # All-Instructions
     INSTRUCTIONS,
+    # Get Instruction Type By Opcode
+    get_instruction_type,
     # Instruction
     Instruction,
     # Parse String
