@@ -79,33 +79,3 @@ class Instruction:
     def get_inst_assigned_sections_count(self) -> int:
         """Return count of instruction assigned section"""
         return sum(1 for parm in inspect.signature(self.typ.assign).parameters if parm != 'self')
-
-
-def example():
-    add = Instruction('add $s0,$s1,$t1')
-    print(add.get_bin_repr())
-    print(add.get_hex_repr(), '\n')
-
-    addi = Instruction('addi $s0, $s1, #45')
-    print(addi.get_bin_repr())
-    print(addi.get_hex_repr(), '\n')
-
-    _or = Instruction('or $t2,$t0,$t1')
-    print(_or.get_bin_repr())
-    print(_or.get_hex_repr(), '\n')
-
-    subi = Instruction('subi $t3, $t0, # 10')
-    print(subi.get_bin_repr())
-    print(subi.get_hex_repr(), '\n')
-
-    lw = Instruction('lw $t0, #50')
-    print(lw.get_bin_repr())
-    print(lw.get_hex_repr(), '\n')
-
-    beq = Instruction('beq $t0')
-    print(beq.get_bin_repr())
-    print(beq.get_hex_repr(), '\n')
-
-
-if __name__ == '__main__':
-    example()

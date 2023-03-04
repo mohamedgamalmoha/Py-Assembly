@@ -185,36 +185,3 @@ def get_register_type(reg_val: str) -> REGS:
     for typ in REGS:
         if typ.match(reg_val):
             return typ(reg_val)
-
-
-def example() -> None:
-    reg = RegularReg('ra')
-    print(reg.get_bin_repr())
-
-    reg = ImmediateReg('110')
-    print(reg.get_bin_repr())
-
-    reg = DirectReg('[ 110 ]')
-    print(reg.get_bin_repr())
-
-    reg = InDirectReg('[ s7 ]')
-    print(reg.get_bin_repr())
-
-    reg = BasePlusIndexReg('[ s7 + a3 ]')
-    print(reg.get_bin_repr())
-
-    reg = RelativeReg('[ #7 + s7 ]')
-    print(reg.get_bin_repr())
-
-    print(get_register_type('[ #7 + s7 ]'))
-
-
-if __name__ == '__main__':
-    example()
-
-# try:
-#     t = typ(reg_val)
-#     t.get_bin_repr()
-#     break
-# except:
-#     pass
